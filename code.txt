@@ -1,0 +1,688 @@
+<!--{if $smarty.session.debug}-->
+<!-- ?? ハブページ専用のスタイル定義（他ページと干渉しないよう一意のクラス名で設計しています） -->
+<style>
+    :root {
+        --lf-primary: #4a5568;
+        --lf-text: #2d3748;
+        --lf-accent: #cca43b; /* ラフォルム様のガラスや光の輝きをイメージしたゴールド系 */
+        --lf-bg-light: #f7fafc;
+    }
+    
+    /* 1. メインビジュアル（看板エリア） */
+    .lf-hero-banner {
+        background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.3)), url('https://www.laforme.jp/upload/save_image/12131826_52aad2b467e5a.jpg') no-repeat center center/cover;
+        height: 35vh;
+        min-height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #fff;
+        margin-bottom: 50px;
+        border-radius: 4px;
+    }
+    .lf-hero-banner .lf-hero-title {
+        font-size: 2.2rem;
+        font-weight: 300;
+        letter-spacing: 0.15em;
+        margin: 0 0 15px 0;
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .lf-hero-banner p {
+        font-size: 1.05rem;
+        letter-spacing: 0.1em;
+        margin: 0;
+        opacity: 0.95;
+    }
+
+    /* 構造化セクションの共通タイトル（大見出し） */
+    .lf-section-title {
+        text-align: center;
+        font-size: 1.6rem;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        margin: 60px 0 35px 0;
+        position: relative;
+        padding-bottom: 15px;
+    }
+    .lf-section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 1px;
+        background-color: var(--lf-accent);
+    }
+
+    /* 2. アイデンティティ（2カラムレイアウト） */
+    .lf-intro-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 60px;
+    }
+    @media (max-width: 768px) {
+        .lf-intro-grid { grid-template-columns: 1fr; }
+    }
+    .lf-intro-box {
+        background: #fff;
+        padding: 30px;
+        border-radius: 4px;
+        border: 1px solid #e2e8f0;
+    }
+    .lf-intro-box .lf-box-title {
+        font-size: 1.15rem;
+        color: var(--lf-primary);
+        margin: 0 0 15px 0;
+        letter-spacing: 0.05em;
+        font-weight: bold;
+    }
+
+    /* 3. 分散ハブ（3カラムカード型レイアウト） */
+    .lf-hub-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        margin-bottom: 60px;
+    }
+    @media (max-width: 900px) {
+        .lf-hub-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+        .lf-hub-grid { grid-template-columns: 1fr; }
+    }
+    
+    .lf-hub-card {
+        background: #fff;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    .lf-hub-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    }
+    .lf-card-img {
+        height: 160px;
+        background-size: cover;
+        background-position: center;
+    }
+    .lf-card-content {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .lf-card-content .lf-card-title {
+        font-size: 1.05rem;
+        margin: 0 0 10px 0;
+        letter-spacing: 0.05em;
+        font-weight: bold;
+        color: var(--lf-text);
+    }
+    .lf-card-content p {
+        font-size: 0.88rem;
+        color: #718096;
+        margin: 0 0 20px 0;
+        line-height: 1.6;
+    }
+    .lf-card-link {
+        font-size: 0.85rem;
+        color: var(--lf-accent);
+        text-decoration: none;
+        font-weight: bold;
+        margin-top: auto;
+        display: inline-flex;
+        align-items: center;
+    }
+    .lf-card-link::after {
+        content: ' →';
+    }
+
+    /* 4. 目的別ナビゲーションエリア */
+    .lf-action-section {
+        background: var(--lf-bg-light);
+        padding: 40px 20px;
+        text-align: center;
+        border-radius: 4px;
+        margin-top: 60px;
+    }
+    .lf-action-section .lf-action-title {
+        margin: 0 0 10px 0;
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+    .lf-action-section p {
+        font-size: 0.95rem;
+        color: #4a5568;
+        margin: 0 0 25px 0;
+    }
+    .lf-action-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    @media (max-width: 768px) {
+        .lf-action-grid { grid-template-columns: 1fr; }
+    }
+    .lf-action-btn {
+        background: #fff;
+        color: var(--lf-text);
+        padding: 15px;
+        text-decoration: none;
+        border-radius: 4px;
+        border: 1px solid #cbd5e0;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+    }
+    .lf-action-btn:hover {
+        background: var(--lf-primary);
+        color: #fff;
+        border-color: var(--lf-primary);
+    }
+
+/* 1. ブランド看板テキスト */
+.lf-banner-title {
+    mix-blend-mode: difference;
+    position: absolute;
+    top: 85px;
+    left: 25px;
+    right: 25px;
+    z-index: 3;
+    height: 1em;
+    margin: 0;
+    font-size: 2em;
+    font-weight: normal;
+    line-height: 1.2;
+    font-family: "Cormorant Infant", "游明朝体", "游明朝", 游明朝, serif;
+    letter-spacing: -0.05em;
+}
+.lf-banner-title #catname_j span {
+    display: none;
+}
+.lf-banner-title #catname_f {
+    display: flex;
+}
+
+/* 2. 筆記体背景透かし文字 */
+.lf-bg-watermark{position:absolute;top:0;left:-20px;z-index:-1;font-weight:normal;white-space:nowrap;line-height:1;font-family:exmouthregular,serif;font-size:11em;opacity:0.1;transform:rotate(-5deg);}
+#pid_news .lf-bg-watermark::after{content:"News";}
+#pid_guide .lf-bg-watermark::after{content: "Guide";}
+#pid_collection .lf-bg-watermark::after{content:"Collection";}
+#pid_allsearch .lf-bg-watermark::after{}
+#pid_dcon .lf-bg-watermark::after{content:"Design Competition";}
+#pid_zakka .lf-bg-watermark::after{content:"Zakka";}
+#pid_enjoy .lf-bg-watermark::after{content:"Enjoy";}
+#pid_mypage .lf-bg-watermark::after{content:"My Page";}
+#pid_cart .lf-bg-watermark::after{content:"Cart";}
+#pid_contact .lf-bg-watermark::after{content:"Contact";}
+#pid_review .lf-bg-watermark::after{content:"Review";}
+.lf-bg-watermark span{display: none;}
+</style>
+
+<div class="lf-banner-title">
+   <div id="catname_j"><span><!--{$tpl_subtitle}--> - <!--{$tpl_title}--></span></div>
+   <div id="catname_f"><div id="beautiful_title">GUIDE</div><div id="beautiful_subtitle">ABOUT GUIDE "PROLOGUE"</div></div>
+</div>
+  <div id="maincolumn_bg"></div>
+  <div id="maincolumn">
+   <div class="lf-bg-watermark"><span>「ご利用ガイド」について</span></div>
+   <div id="contents" class="flexcroll">
+    <!-- 1. メインビジュアル＆メインコピー -->
+    <div class="lf-hero-banner">
+        <div class="lf-hero-content">
+            <h2 class="lf-hero-title">Laforme Brand Guide</h2>
+            <p>手にしたときの光の揺らめきが、そのまま作品の一部です。</p>
+        </div>
+    </div>
+        
+    <!-- 2. ラフォルムのアイデンティティ（大見出しh2） -->
+    <h2 class="lf-section-title">一点ものの価値</h2>
+    <div class="lf-intro-grid">
+        <div class="lf-intro-box">
+            <h3 class="lf-box-title">唯一無二の存在として</h3>
+            <p>同じ作品は二度と表現できない技法で生まれる個性。ラフォルムでは全工程を手作業で行うため、すべての作品が異なる表情を持ちます。</p>
+        </div>
+        <div class="lf-intro-box">
+            <h3 class="lf-box-title">八ヶ岳とのものづくり</h3>
+            <p>八ヶ岳の豊かな自然環境は、作品づくりにおける光や色彩のインスピレーション源。静かな環境の中で、ひとつひとつ丁寧に紡がれています。</p>
+        </div>
+    </div>
+
+    <!-- 3. 各詳細ページへの分散ハブリンク（大見出しh2） -->
+    <h2 class="lf-section-title">ラフォルムを知る</h2>
+    <div class="lf-hub-grid">
+        
+        <!-- Story -->
+        <div class="lf-hub-card">
+            <div class="lf-card-img" style="background-image: url('https://www.laforme.jp/laforme_glass_jewelry-12012157_565d9920799e8.jpg');"></div>
+            <div class="lf-card-content">
+                <h3 class="lf-card-title">想い - Story</h3>
+                <p>ガラスという素材を通じて、私たちがお客様に届けたい「心ときめく瞬間」の物語。</p>
+                <a href="story.php" class="lf-card-link">ストーリーを読む</a>
+            </div>
+        </div>
+
+        <!-- Craft -->
+        <div class="lf-hub-card">
+            <div class="lf-card-img" style="background-image: url('https://www.laforme.jp/20260624-1.jpg');"></div>
+            <div class="lf-card-content">
+                <h3 class="lf-card-title">職人技 - Craft</h3>
+                <p>成形・焼成・研磨まで、機械に頼らず全行程を手作業で仕立てる手仕事のこだわり。</p>
+                <a href="craft.php" class="lf-card-link">手仕事の裏側を見る</a>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="lf-hub-card">
+            <div class="lf-card-img" style="background-image: url('https://www.laforme.jp/upload/save_image/20251007-2.jpg');"></div>
+            <div class="lf-card-content">
+                <h3 class="lf-card-title">軌跡 - History</h3>
+                <p>2000年、小さなアトリエから始まり、インターネット黎明期から歩んできた創作の歴史。</p>
+                <a href="history.php" class="lf-card-link">歩みを見る</a>
+            </div>
+        </div>
+
+        <!-- Artist -->
+        <div class="lf-hub-card">
+            <div class="lf-card-img" style="background-image: url('https://www.laforme.jp/ud/packages/default/img/20210717-14.jpg');"></div>
+            <div class="lf-card-content">
+                <h3 class="lf-card-title">作家 - Artist</h3>
+                <p>光と色彩をコントロールし、独自のガラスジュエリーを生み出すクリエイターの紹介。</p>
+                <a href="artist.php" class="lf-card-link">作家について</a>
+            </div>
+        </div>
+
+        <!-- Media -->
+        <div class="lf-hub-card">
+            <div class="lf-card-img" style="background-image: url('https://www.laforme.jp/ud/packages/default/img/20210717-16.jpg');"></div>
+            <div class="lf-card-content">
+                <h3 class="lf-card-title">メディア - Media</h3>
+                <p>これまでの展示会、掲載実績、そして私たちが発信してきた活動の記録。</p>
+                <a href="media.php" class="lf-card-link">掲載実績を見る</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 4. 目的別ナビゲーション（ユーザーのアクション誘導） -->
+    <div class="lf-action-section">
+        <h3 class="lf-action-title">作品を見る・作る</h3>
+        <p>あなたの目的に合わせて、次のステップをお選びください。</p>
+        <div class="lf-action-grid">
+            <a href="collection.php" class="lf-action-btn">コレクションを見る</a>
+            <a href="custom.php" class="lf-action-btn">オーダーメイドを相談する</a>
+            <a href="memorial.php" class="lf-action-btn">手元供養・メモリアル</a>
+        </div>
+    </div>
+
+   </div>
+<!--{* ★記事内広告 *}--><span class="mini">[PR]</span><!--{include file='ads/記事内広告①.tpl'}-->
+  </div>
+
+  <!-- ▼ページ遷移 -->
+  <span id="page_prev"></span>
+  <span id="page_next"></span>
+  <!-- ▲ページ遷移 -->
+
+<!--{*★開発環境/ここまで--------- *}-->
+<!--{else}-->
+  <h2>
+   <div id="catname_j"><span><!--{$tpl_subtitle}--> - <!--{$tpl_title}--></span></div>
+   <div id="catname_f"><div id="beautiful_title">GUIDE</div><div id="beautiful_subtitle">ABOUT GUIDE "PROLOGUE"</div></div>
+  </h2>
+
+<!--{* ★各ページトップ用カテゴリのブロック★ *}-->
+<!--{if $tpl_page_category !== 'error'}-->
+  <!--{include_php_ex file="`$smarty.const.HTML_PATH`frontparts/bloc/pagetop_category.php"}-->
+<!--{/if}-->
+  <div id="maincolumn_bg"></div>
+  <div id="maincolumn">
+   <h3><span>「ご利用ガイド」について</span></h3>
+   <div id="contents" class="flexcroll">
+    <div id="wide">
+     <div id="open_trigger" class="tip"><span class="tip_contents"><b>クリック!!</b><br>ラフォルムやスタッフのご紹介です♪</span></div>
+     <div id="open_trigger_bg" class="radius10"></div>
+
+     <h4><span>ここから始まる、ガラスたちの無限の物語。</span></h4>
+
+     <div class="column2">
+      <p>ようこそ<b> <!--{$arrSiteInfo.shop_name|escape}--></b>へ。 </p>
+<p>私たちラフォルムは、お客様お一人おひとりのイメージをお聞きし、ご相談しながら世界に一つだけのオリジナルアクセサリーやジュエリーを一つひとつ全て手作りで心を込めて丁寧にお作りしています。
+      世界中どこを探しても見つけられない、あなただけのオリジナルデザインやイメージを実際の「形」にお作りすることが出来る、<a href="/fullordermade.php" class="keyclr" target="_blank">オーダーメイド</a>を中心にしたインターネットのお店です。</p>
+     <img src="<!--{$TPL_DIR}-->img/top/lf_imagephoto.jpg" style="width:100%;margin:10px 0 30px 0;" alt="ラフォルムはこんな所♪" class="shadow" />
+
+      <img src="<!--{$TPL_DIR}-->img/guide/top_3.jpg" style="border:5px solid #fff;margin:15px;width:200px;transform:rotate(-2deg);-webkit-transform:rotate(-2deg);float:left;" class="shadow">
+      <p><b>『La forme』(ラフォルム）とは、フランス語で『形』を表す言葉</b>です。私たちは一つひとつの作品の「形」、そして「光と色彩」を制作のメインテーマに考えています。ガラスは実に創造性に富んだ魅力的な素材です。
+      ガラスは一見冷たくも思えますが、実際に触りますと、滑らかで徐々に暖かく温もりも感じることが出来る素敵な素材です。金属にはないガラスならではの美しさや輝きもお楽しみいただけます。ご相談しながら、私たちラフォルムだけのオリジナルアクセサリーをお作りさせていただきますね。</p>
+      <p>ご注文されたオリジナル作品は、サイト上の<a href="/products/item.php?search_limit=1&category_id=0" class="keyclr" target="_blank">「オーダーメイド作品」</a>で、完成後・お届け前にご確認いただけ安心です。作品集のようにこれまでにお作りしてきた数多くの作品を掲載しています。
+      オーダーメイド作品を見て「この作品のこんな所がいい♪」「この作品の色合いとこの作品のフォルムを組み合わせたい」などといったように、
+      ご自分のイメージを膨らませながらご覧くださいね!!ご自分自身へのご褒美として、お気持ちのこもった世界に一つの<a href="/gift_and_memorial.php" class="keyclr" target="_blank">贈り物やギフト</a>に、また少数意見を重視した男性向けの作品などどのような用途でもお作りできます。また、すぐにお買い求めいただける基本的に1点限りの<a href="/products/item.php?search_limit=4" class="keyclr" target="_blank">「限定コレクション」</a>では、個性豊かで自分らしさを引き立たせる世界に一つのラフォルムオリジナルアクセサリーを販売中です。</p>
+      <p>ラフォルムでは、お写真やお手紙などの他、お遺骨・お遺灰など「思い出の大切なもの」をガラスの中にメモリアル封入する<a href="/temotokuyou.php" class="keyclr" target="_blank">手元供養アクセサリーやオブジェ</a>をお作りできます。
+      世界にひとつの究極の満足感を実感でき、大切な存在をいつも身近に感じていただけます。
+
+      <img src="<!--{$TPL_DIR}-->img/guide/top_1.jpg" style="width:100%;float:left;margin:10px 0 30px 0;" class="shadow">
+      <p>ラフォルムは2000年7月7日の星祭りの日、大きな夢と希望を抱き誕生しました。</p>
+      <p>信州原村・八ヶ岳の麓にある私たちの小さなアトリエは、豊かな自然に囲まれています。
+      標高1200メートルの高原では、四季折々に素朴な草花や樹木の輝き、満天の星空やひらひらと舞う純白な雪の精、心静まる水の音や小鳥のさえずりなど、
+      日々日常の小さな感動に励まされながら大好きなもの作りを続けています。</p>
+      <p>一つひとつの写真や作品名には、私たちからあなたに届けたい大切な思いを込めたとっておきの詩があります。そして一人ひとりに色々なドラマがあるように、一つひとつの作品にも色々なドラマがあります。
+       <p>私たちは、ひとつの作品を発表する際、ネーミングはもちろん写真も重要な作品の一部と考えています。インターネットでは作品を手にしてご覧頂けませんが、
+       写真を通して作品に込めたイメージや私達の気持ちまで感じ取って頂けたら、こんなに素敵なことはありません。イメージを伝え合いながら私達と二人三脚で一つの作品作りをし、実際の形になった時の感動をぜひ実感してください。 </p>
+
+      <p>『他の人にはわからない。私逹とあなたとガラス逹の永遠の物語』そんな物語のお手伝いができたらって思います。「あなたにめぐり合えて本当によかった。めぐり合い一つひとつ大切にしたい。」
+      私たちのお店が、手作り大好きな仲間が集まる素敵な広場になれば幸せです。</p>
+      <a href="<!--{$smarty.const.URL_DIR}--><!--{*$smarty.const.USER_DIR*}-->pamphlet.php"  id="co_pamphlet" class="tip"><img src="<!--{$TPL_DIR}-->img/common/pamphlet.gif" class="shadow"><span class="tip_contents">ラフォルムオリジナル作品100点余り掲載の<br /><b>パンフレット</b>をご用意しております。</span></a>
+      <p>もし身に付けていただいてお気に入りになれば他の方を紹介していただく、そんな「口コミ」のお客様、リピーターのお客様を大切にしたいインターネットのお店を目指しています。<em>『世界に一つ、一作品へのこだわりと夢』</em>
+      をコンセプトに、手作りの温もりや創り手の心をこの場を通して、少しでも多くの皆様に知っていただけたら嬉しいです。</p>
+      <p>あなたの大切な「想い」を、実際の「形」に表現したい。これからも大好きな「ものづくり」を通して皆様に喜ばれる作品作りをしていきたい。</p>
+      <p>世界にひとつ、あなただけのオーダーメイドオリジナルガラスジュエリー・アクセサリーを、ラフォルムからあなたにお届けします。</p>
+      <div id="sign"><span>ラフォルム店長 田中武芳</span></div>
+
+     </div>
+
+     <h4><span>ラフォルム ブランドヒストリー</span></h4>
+     <div class="column2">
+      <p>ラフォルムの造形作家、Webデザイナー、フォトグラファー等として活動するYUKIより、ラフォルム20年以上の歩みを私の歩みと共に熱く語ります。長文、最後までどうかお付き合いください（笑）</p>
+
+      <h5><span>作り手としての想い。</span></h5>
+     <h6><span>プロローグ</span></h6>
+約四半世紀前。
+当時中学生だった私は、母に薦められて１冊の本を手に取った。
+
+「ガラスフュージング」
+
+ガラスの制作技法が書かれた本。
+そこには無限の可能性と夢が詰まっていた。
+
+幼いころから「ものづくり」が大好きだった。
+今は亡き祖母に木製の棚を作ってあげたらとても喜んでくれた。
+
+何かを作りだすことで喜んでくれる人がいる。
+私はその笑顔を見るのが好きだ。それが最大の喜びでもある。
+
+台所の片隅の小さな小さな作業場の「アトリエ」。
+そこからこの物語は始まった。
+
+当時、海外有名ブランドの染色デザインの仕事をしていた父も
+ガラスの無限の可能性に魅了され、
+小さな電気炉でガラスを溶かし、
+その様を家族で夢中で楽しんでいた。
+
+ガラスの塊のようなもので、作品と呼べるようなものではなかった。
+知識も技術も道具もない、
+それなのに
+私も面白くて楽しくて、ガラスという素材に魅了され、
+家族を巻き込んで一心不乱に"作品"を作り続けた。
+
+そして数年後・・・
+「その楽しさを誰かに伝えたい！！」
+そんな気持ちでいっぱいになった。
+
+
+     <h6><span>ネットショップを立ち上げた</span></h6>
+
+まだまだインターネット黎明期であった2000年7月7日、
+たった一台のノートパソコンとわずかな設備で一つのネットショップを立ち上げた。
+
+『手作りガラス工房 ラフォルム』
+
+今に繋がるウェブサイトの原型だ。
+すべて独学、手作業でオリジナルガラス作品とホームページの両方を制作した。
+（今では「ウェブサイト」と呼ばれることが増えてきたが、
+ここでは当時呼ばれていた「ホームページ」という言葉をあえて使いたい）
+
+何の知名度も伝手もコネもない。
+当然ご注文などすぐにいただけるはずもない。
+大海原に投げ出されたように何もわからなかった。
+
+田んぼに囲まれた農村の片田舎。
+当然農業に従事するのが当たり前の"小さな小さな世界"。
+周囲の目は私たちをある種の「変わり者」の目で見た。
+
+当然成功するはずはない、出来るはずもないと、
+冷ややかな周囲の目を感じた。
+心が押し潰されそうで苦しかった。
+
+その中で家族みんなでどうすればよいのか、
+荒波の中、必死でもがき、苦しみながらも一筋の光を探し求め、
+ガラス作品作りの楽しさ、美しさを伝えたい一心で
+その時出来ることをただひたすら続けた。
+
+どのようにすれば作品の世界観や制作時の想いを伝えられるのか。
+作品の写真撮影の際には、照明の当て方や構図、
+背景の色味を作品と呼応するように、さらに虫眼鏡を使用し
+臨場感のある写真になるよう工夫してみた。
+
+青春時代、いつも傍に、ガラス作品作り、ホームページ作りがあった。
+
+思い返すと、私の人生の大半を捧げたといっても過言ではないが、
+ものづくりが大好きな私にとって、これほどやり甲斐のあるものはなく、
+辛いと思うときもあったが、何を言われても決して苦ではなかった。
+
+
+     <h6><span>紆余曲折の中、初めてのご注文が・・・♪ </span></h6>
+家族と共に作品を作り続け、ホームページにアップし続けたが、
+なかなか注文に結びつかない日々が続く。
+
+ホームページのデザインを変えて見たり、写真の撮り方を変えてみた。
+企画をいくつもいくつもやってみたがそれでも全くダメだった。。
+
+自分は「何をやってもダメ人間なんだ」と思った。
+もうやめようと何度涙を流した事か。
+
+祖母に励まされる日々が続いた。
+
+
+そんなある日、祖母の友達の近所のおばちゃんが訪ねて来て、
+初めて作品を買ってくれた。
+親戚のパン屋さんにも作品を置いてもらった。
+そこから来てくださった方が
+見ず知らずの方から頂いた初めてのご注文となった。
+
+そして、時を同じくして、ついにホームページからもご注文を頂いた！！
+
+初めてメールで頂いたご注文のことを今でも鮮明に覚えている。
+その嬉しさと感謝の気持ち。
+今でも大切な宝物として心の中で輝いている。
+
+嬉しいことに、その当時のお客様と今でもお付き合いがある。
+身の上相談までしてしまう程であるが、その話はまたいつの日か。
+
+
+     <h6><span>大好きだった天国の祖母のためにも。</span></h6>
+そして、あれから時は流れた・・・。
+
+八ヶ岳の麓、原村の地。
+その名の通り大自然に包まれた広大な田畑と原っぱ。
+満天の星が美しいこの土地は、私が幼い頃連れてきてもらった思い出の地でもある。
+心の中で、ずっとこの地で大好きなものづくりができたらなぁ・・と
+予てより家族で話していた。
+
+順風満帆とまでは言わないが徐々にご注文も頂けるようになり、
+学業と両立し忙しくも楽しい日々を送っていた。
+今思えば、あの日々は私のほんのひとときの青春時代だった。
+
+そんな矢先、大切な祖母が突然倒れた。
+名古屋から毎週のように献身的にお見舞いに通ったが、
+大学2年の時一年余りの闘病の末願いも叶わず天国へと旅立った。
+
+心の支えだった、明るく太陽のような存在だった優しかった祖母。
+大切な存在を失った私と家族は、
+喪失感に包まれ、暫く虚無の日々を過ごした。
+事実、その頃のことははっきりと思い出せない。
+
+しかし、いつしか、「このままではいけない！」と思った。
+そして決断した。
+
+家族で原村に移住して、
+ガラス制作のアトリエをすることを。
+
+まるで亡き祖母が応援してくれているかのように、
+移住計画も順調に進み、様々な良いご縁をいただいて今に続く。
+
+初めてのご注文から20年以上、
+今でも私と家族で作品を作り続けている。
+作品の数も数万点になるだろうか。
+
+一つひとつ作品制作を行うごとに知識や経験を得た。
+
+お客様から頂く喜びのお声のみならず、
+時にお客様に教えられ、叱咤激励を頂くことで、
+「一つでも多く世界にひとつだけの作品をこの世界に生み出したい」
+という強い思いは使命感に変わっていった。
+お客さまには日々感謝すると共に励みにもなり、
+いつしか、ものづくりは私の人生のテーマになった。
+
+私の喜びの原点だった、応援し励まし続けてくれた
+大好きだった天国の祖母のためにも。
+
+     <h6><span>一つひとつの作品には物語がある。</span></h6>
+何もわからなかった少年は、ただがむしゃらに前だけを見て走り続けた。
+家族の協力や知識のあるプログラマーさん、様々な方の力を借りて今がある。
+出会いご縁を頂いた方々、そして多くのお客様には感謝の気持ちでいっぱいだ。
+
+あれからどれだけの作品を作ってきただろうか、
+オーダーメイドで、いくつの作品を形に出来ただろうか。
+
+それを振り返るのはまだまだ早い。
+作品には全てに思い入れがあり、制作時のことを覚えている。
+一つひとつすべて個性を持った自分の子供のような大切な存在だ。
+作品に付けた名前には大切な想いが詰まっている。
+そして、作品の持つ個性を最大限引き立てるため、
+一枚一枚の写真には妥協したくない。
+
+作品制作のみならず、作品名・写真、そしてお届け後のお客様の笑顔、
+さらにはその後の思い出作り。
+そこまで含めて一つの物語は完結する。
+
+必要とされるお客様がいる限り、私は作品作りを続けたい。
+今、この瞬間を楽しみながら大好きなものづくりを続けたい。
+自分の信念を貫き、お客様の夢を形にする。
+
+『<!--{$arrSiteInfo.shop_name|escape}-->』
+
+この物語は、まだまだ続く。
+     </div>
+
+
+
+
+
+
+
+     <h4><span>「人が作り出した奇跡の宝石」 ガラスの魅力。</span></h4>
+     <div class="column2">
+ガラスは実に創造性に富んだ魅力的な素材です。
+一見冷たくも思えますが、実際に触りますと滑らかで徐々に暖かく温もりも感じます。金属にはないガラスならではの美しさや輝き、そして優しさもお楽しみいただけます。
+
+見る角度や光の当たり方で、その表情を大きく変えます。同じものとは思えないほどに色味や煌きが変わります。そのすべての表情は決して写真ではお伝えすることはできません。ぜひお手に取って実際にあなたの目でお楽しみいただければ幸いです。
+
+ガラスは、手の加え方によってどの様な形にも色にも、煌きにも変化させることができます。まさに世界にひとつの「人が作り出した奇跡の宝石」です。
+
+私たちが作品作りに使用しているのは、ガラス工芸用に手作りで製造されている高級輸入ガラス素材です。硬質・高品質なその素材から、お客様のご希望をお伺いし一つひとつオーダーメイドでお作りしております。
+
+私たちは素材を活かし、手作業で何度も何度も削り・焼成・形を整え、磨きをかけて、そして何日もかけてオンリーワンのガラスのジュエリーを生み出しています。
+
+      <h5><span>ラフォルムの特徴/作品作りへのこだわり</span></h5>
+
+      <h6><span>全て手作り、オーダーメイド。</span></h6>
+<p>
+     <a href="<!--{$smarty.const.SITE_URL}-->collection_top.php">コレクション</a>に掲載中の作品は、全て私たちが一つひとつ手作業で制作した<strong>オリジナルアクセサリー</strong>です。
+すぐにご購入いただける1点限定品の他、お客様のご希望をお聞きしながらお作りしたオーダーメイド作品も、作品例としてご掲載しております。
+<!--{*
+     オーダーメイド作品と限定コレクションを合わせて現在<a href="<!--{$smarty.const.SITE_URL}-->products/item.php?search_limit=<!--{$smarty.const.SEARCH_LIMIT_NO_FLAG}-->" target="_blank"><!--{$tpl_linemax}-->点</a>掲載中!!
+*}-->
+</p>
+     <h6><span>サイト上でカスタマイズ。</span></h6>
+<p>ラフォルムだけの<strong>カスタマイズシステム</strong>でお好きなオプション項目を選択してお問い合わせが可能です。内容をご確認させていただきお見積もりやご提案をさせていただきます。</p>
+     <h6><span>作品検索や並べ替えが自由自在。</span></h6>
+<p>キーワード検索はもちろん、ニュアンスやイメージ・オプション項目の種類・色などからも検索ができます。さらに、検索結果や作品ページでは様々な条件で並べ替えや表示個数を変えてご覧頂くことが可能です。</p>
+
+     <h6><span>通常は目にすることの無い裏面まで丁寧に鏡面磨き。</span></h6>
+<p>一般的な市販のガラスのペンダントは裏面の磨きはあまり行われておらず、ザラザラやボコボコの状態のものも多く見受けられますが、私たちの作品は一貫してすべての作品の裏面を鏡面磨きを行ってガラスの美しさをより引き立てます。</p>
+
+     <h6><span>難易度の高いガラスへの穴あけを行い金具を設置。</span></h6>
+<p>バーナーを使用して制作されるガラス作品に多く見られる「ガラスの輪」は強度面で弱く大変破損しやすいです。私たちの作品では、ガラストップへの負担が極力少なくなりますよう、ガラスに直接ドリルで小さな穴を開け、丸カンなどの金具を介しチェーンに接続しております。ガラストップへの穴あけは非常に難易度が高く熟練した技術が必要です。最終段階での穴あけ作業には大変神経を遣います。</p>
+
+     <h6><span>ご希望のイメージを表現できるまで何度も試作を行う。</span></h6>
+<p>作品制作は、お客様のご希望を表現した「ガラスの塊」作りから始まります。ガラスの塊作りは決して一度では表現できません。お客様のご希望に少しでも近い仕上がりとなるまで何度も試作を繰り返し、作り手として納得した上で初めて「ガラスの塊」が仕上がります。そこから削り出し、焼成・磨きの工程を経て長い時間を掛け、心のこもった世界にひとつの作品が仕上がります。</p>
+
+本当のガラスの美しさ、煌き・輝きをお届けしたい。
+世界中さがしてもどこにもない、あなただけのたったひとつの宝物。
+その宝物を一人でも多くの方にお届けしたい。
+
+
+     </div>
+
+     <h5><span>スタッフのご紹介</span></h5>
+     <p>少人数で作品制作やメール対応をさせていただいておりますので、お返事や作品制作などにお時間を頂きお待たせしてしまうこともありますが、
+一つひとつ丁寧にお作りし、頂いたメッセージなどは全て拝見させていただき心を込めてお返事を差し上げております。
+いつでも、どのようなことでもお気軽に<a href="/contact/" class="keyclr" target="_blank">お問い合わせ</a>くださいね!(^^)!</p>
+     <div class="column3">
+      <div class="height">
+       <p style="height:70px;line-height:70px;border:1px solid #eee;border-left:0;border-right:0;text-align:center;">
+        <span class="tip">
+         <img src="<!--{$TPL_DIR}-->img/common/chara_takeyoshi.gif" alt="店長たけよしです！ごゆっくりご覧下さい！！" />
+         <span class="tip_contents">
+          キャラクター名：<em>店長くん</em><br />
+                 特徴：おっちょこちょいでわすれんぼ。バタバタと走り回る。普段はおっとりしているが・・仕事の時には鬼になる頑固者。ページ上ではナビゲーターを務める。
+         </span>
+        </span>
+       </p>
+       <img src="<!--{$smarty.const.SITE_URL}--><!--{$smarty.const.USER_DIR}-->packages/default/img/guide/introduce_05_takeyoshi.gif" class="photo" width="50" height="50" alt="店長 たけよし" style="margin:0 10px;float:left;" />
+       <p><b>田中 武芳</b>（たなか たけよし）。店長、造形作家。長野県生まれ。日本ランプワーク協会会員。</p>
+       <p>20年余り染色デザイナーとしてバレンチノやエルメス、トラサルディなどのスカーフやハンカチの染色デザイントレーサーとして長年活躍後、ガラスの魅力に惹かれ独学でガラスの技術を習得し現在に至ります。作品一つひとつ丁寧に心を込めてお作りしています。</p>
+      </div>
+
+      <div class="height">
+       <p style="height:70px;line-height:70px;border:1px solid #eee;border-left:0;border-right:0;text-align:center;">
+        <span class="tip">
+         <img src="<!--{$TPL_DIR}-->img/common/chara_takayo.gif" width="32" height="38" alt="たかべーです！！よろしくネ♪" />
+         <span class="tip_contents">
+          キャラクター名：<em>たかべー</em><br />
+                  特徴：明るく前向き。数の計算が得意のはずだが、時々間違えて注意を受ける。実は店長くんよりもおっちょこちょいという噂も・・・!?
+         </span>
+        </span>
+       </p>
+       <img src="<!--{$TPL_DIR}-->img/guide/introduce_05_takayo.gif" class="photo" width="50" height="50" alt="たかべー" style="margin:0 10px;float:left;" />
+       <p><b>田中 貴代</b>（たなか たかよ）。ガラス工芸作家。長野県生まれ。</p>
+       <p>教育者として20年余り活躍後、独学でガラス制作の技術を習得し現在に至ります。主に作品のデザイン起こしからベース作り、そしてメール＆お電話対応・作品発送などなどを担当しております。</p>
+<p>店長の補佐＆実は影の店長（笑）です。</p>
+      </div>
+
+      <div class="height">
+       <p style="height:70px;line-height:70px;border:1px solid #eee;border-left:0;border-right:0;text-align:center;">
+        <span class="tip">
+         <img src="<!--{$TPL_DIR}-->img/common/chara_yuki.gif" width="27" height="43" alt="yukiです。おもにＰＣを担当してます（＾＾）ｖ" />
+         <span class="tip_contents">
+          キャラクター名：<em>YUKI</em><br />
+                  特徴：たま～に登場する謎のキャラクター。其の存在は一体!?（笑）
+         </span>
+        </span>
+       </p>
+       <img src="<!--{$TPL_DIR}-->img/guide/introduce_05_yuki2.gif" class="photo" width="50" height="50" alt="yuki" style="margin:0 10px;float:left;" />
+       <p><b>YUKI</b>（ゆうき）。造形作家、Webデザイナー、フォトグラファー。長野県生まれ。</p>
+       <p>名古屋造形芸術大学（※現：名古屋造形大学）卒。皆さまの声を大切に、心のこもった温かいサイト作りを心がけています。手作りの温もりや素晴らしさ、創り手の心をこのサイトを通して皆様に知っていただけたら嬉しいです。ウェブデザインからメール対応・事務＆雑用まで何でもこなします（笑）</p>
+<p><a href="https://twitter.com/lf_yuki" target="_blink">Twitter</a> / <a href="https://www.instagram.com/la_forme.yuki/" target="_blink">Instagram</a> / <a href="http://photohito.com/user/107519/" target="_blink">PHOTOHITO</a></p>
+      </div>
+     </div>
+    </div>
+   </div>
+<!--{* ★記事内広告 *}--><span class="mini">[PR]</span><!--{include file='ads/記事内広告①.tpl'}-->
+  </div>
+
+  <!-- ▼ページ遷移 -->
+  <span id="page_prev"></span>
+  <span id="page_next"></span>
+  <!-- ▲ページ遷移 -->
+
+<!--{/if}-->
